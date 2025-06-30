@@ -1,8 +1,6 @@
-# Vercel Python Runtime
 import json
 import sys
 import os
-from http.server import BaseHTTPRequestHandler
 
 # 添加src目录到Python路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,92 +22,97 @@ except ImportError as e:
     print(f"Import error: {e}")
     logger = None
 
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        try:
-            # 设置CORS头
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-            self.end_headers()
-            
-            # 读取请求数据
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            
-            if content_length > 0:
-                request_data = json.loads(post_data.decode('utf-8'))
-            else:
-                request_data = {}
-            
-            action = request_data.get('action', 'generate_report')
-            
-            if action == 'generate_report':
-                # 执行AI日报生成
-                result = self.generate_ai_report()
-                response = {
-                    "success": True,
-                    "message": "AI日报生成成功！已推送到飞书",
-                    "data": result
-                }
-            else:
-                response = {
-                    "success": False,
-                    "error": "未知的操作类型"
-                }
-                
-        except Exception as e:
-            logger.error(f"处理请求时发生错误: {e}")
-            response = {
-                "success": False,
-                "error": str(e)
-            }
+def api(request):
+    """Vercel函数处理器"""
+    
+    # 设置CORS头
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Content-Type': 'application/json'
+    }
+    
+    # 处理预检请求
+    if request.method == 'OPTIONS':
+        return ('', 200, headers)
+    
+    # 只处理POST请求
+    if request.method != 'POST':
+        return (json.dumps({
+            "success": False,
+            "error": "只支持POST请求"
+        }, ensure_ascii=False), 405, headers)
+    
+    try:
+        # 读取请求数据
+        body = request.get_data()
+        if body:
+            request_data = json.loads(body.decode('utf-8'))
+        else:
+            request_data = {}
         
-        # 发送响应
-        self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+        action = request_data.get('action', 'generate_report')
+        
+        if action == 'generate_report':
+            # 执行AI日报生成
+            result = generate_ai_report()
+            response_data = {
+                "success": True,
+                "message": "AI日报生成成功！已推送到飞书",
+                "data": result
+            }
+        else:
+            response_data = {
+                "success": False,
+                "error": "未知的操作类型"
+            }
+            
+    except Exception as e:
+        if logger:
+            logger.error(f"处理请求时发生错误: {e}")
+        response_data = {
+            "success": False,
+            "error": str(e)
+        }
     
-    def do_OPTIONS(self):
-        # 处理预检请求
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
-    
-    def generate_ai_report(self):
-        """生成AI日报"""
-        try:
+    return (json.dumps(response_data, ensure_ascii=False), 200, headers)
+
+def generate_ai_report():
+    """生成AI日报"""
+    try:
+        if logger:
             logger.info("开始生成AI日报...")
-            
-            # 创建主服务实例
-            rainbow_service = RainbowOneService()
-            
-            # 执行完整的工作流程
-            success = rainbow_service.run_complete_workflow()
-            
-            if not success:
-                raise Exception("工作流程执行失败")
-            
-            # 获取结果
-            products = rainbow_service.get_latest_products()
-            report = rainbow_service.get_latest_report()
-            
-            result = {
-                "products": [{"name": p.name, "ranking": p.ranking} for p in products],
-                "report_date": report.date.isoformat() if report else None,
-                "feishu_sent": success
-            }
-            
+        
+        # 创建主服务实例
+        rainbow_service = RainbowOneService()
+        
+        # 执行完整的工作流程
+        success = rainbow_service.run_complete_workflow()
+        
+        if not success:
+            raise Exception("工作流程执行失败")
+        
+        # 获取结果
+        products = rainbow_service.get_latest_products()
+        report = rainbow_service.get_latest_report()
+        
+        result = {
+            "products": [{"name": p.name, "ranking": p.ranking} for p in products],
+            "report_date": report.date.isoformat() if report else None,
+            "feishu_sent": success
+        }
+        
+        if logger:
             logger.info("AI日报生成完成")
-            
-            return {
-                "products_count": len(result.get("products", [])),
-                "report_files": result.get("report_files", []),
-                "feishu_sent": result.get("feishu_sent", False)
-            }
-            
-        except Exception as e:
+        
+        return {
+            "products_count": len(result.get("products", [])),
+            "report_files": result.get("report_files", []),
+            "feishu_sent": result.get("feishu_sent", False)
+        }
+        
+    except Exception as e:
+        if logger:
             logger.error(f"生成AI日报失败: {e}")
-            raise e 
+        raise e 
