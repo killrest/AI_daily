@@ -1,0 +1,65 @@
+# 彩虹一号配置文件
+app:
+  name: "彩虹一号"
+  version: "1.0.0"
+  timezone: "Asia/Shanghai"
+
+# 信息源配置
+sources:
+  product_hunt:
+    enabled: true
+    url: "https://www.producthunt.com"
+    api_url: "https://api.producthunt.com/v2/api/graphql"
+    rate_limit: 60  # 每分钟请求次数限制
+    
+# AI配置
+ai:
+  provider: "volcengine_ark"  # 使用火山引擎ARK平台
+  model: "deepseek-v3"  # DeepSeek-V3模型
+  temperature: 0.3
+  max_tokens: 2000
+  base_url: "https://ark.cn-beijing.volces.com/api/v3"  # ARK API端点
+  endpoint_id: "ep-m-20250413002708-ct9mc"  # 您的endpoint ID
+  
+# 内容筛选配置
+filtering:
+  keywords:
+    ai_related:
+      - "AI"
+      - "artificial intelligence"
+      - "machine learning"
+      - "deep learning"
+      - "neural network"
+      - "LLM"
+      - "GPT"
+      - "automation"
+      - "chatbot"
+      - "computer vision"
+      - "NLP"
+      - "natural language"
+      - "智能"
+      - "人工智能"
+      - "机器学习"
+      - "自动化"
+      
+  exclude_keywords:
+    - "unrelated"
+    - "spam"
+
+# 飞书配置 - 敏感信息通过环境变量提供
+feishu:
+  webhook_url: ""  # 通过环境变量 FEISHU_WEBHOOK_URL 提供
+  webhook_secret: ""  # 通过环境变量 FEISHU_WEBHOOK_SECRET 提供
+  app_id: ""
+  app_secret: ""
+  
+# 定时任务配置
+schedule:
+  daily_report_time: "21:30"  # 每日报告发送时间（北京时间）
+  data_collection_time: "21:00"  # 数据收集时间
+  
+# 输出配置
+output:
+  format: "markdown"
+  include_images: true
+  max_products: 10  # 每日最多包含产品数量 
