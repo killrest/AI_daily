@@ -1,6 +1,6 @@
 import json
 
-def api(request):
+def handler(request):
     """Vercel健康检查函数处理器"""
     
     # 设置CORS头

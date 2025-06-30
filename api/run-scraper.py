@@ -22,7 +22,7 @@ except ImportError as e:
     print(f"Import error: {e}")
     logger = None
 
-def api(request):
+def handler(request):
     """Vercel函数处理器"""
     
     # 设置CORS头
