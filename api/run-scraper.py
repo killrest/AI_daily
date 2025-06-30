@@ -23,30 +23,35 @@ except ImportError as e:
     logger = None
 
 def handler(request):
-    """Vercel函数处理器"""
-    
-    # 设置CORS头
-    headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Content-Type': 'application/json'
-    }
-    
     # 处理预检请求
     if request.method == 'OPTIONS':
-        return ('', 200, headers)
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
+            'body': ''
+        }
     
     # 只处理POST请求
     if request.method != 'POST':
-        return (json.dumps({
-            "success": False,
-            "error": "只支持POST请求"
-        }, ensure_ascii=False), 405, headers)
+        return {
+            'statusCode': 405,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+            'body': json.dumps({
+                "success": False,
+                "error": "只支持POST请求"
+            }, ensure_ascii=False)
+        }
     
     try:
         # 读取请求数据
-        body = request.get_data()
+        body = request.get_data() if hasattr(request, 'get_data') else b''
         if body:
             request_data = json.loads(body.decode('utf-8'))
         else:
@@ -76,7 +81,16 @@ def handler(request):
             "error": str(e)
         }
     
-    return (json.dumps(response_data, ensure_ascii=False), 200, headers)
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        },
+        'body': json.dumps(response_data, ensure_ascii=False)
+    }
 
 def generate_ai_report():
     """生成AI日报"""
