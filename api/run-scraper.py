@@ -1,3 +1,4 @@
+# Vercel Python Runtime
 import json
 import sys
 import os

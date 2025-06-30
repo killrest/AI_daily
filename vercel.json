@@ -1,20 +1,7 @@
 {
-  "functions": {
-    "api/run-scraper.py": {
-      "runtime": "@vercel/python",
-      "maxDuration": 60
-    },
-    "api/health.py": {
-      "runtime": "@vercel/python"
-    }
-  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api).*)",
       "destination": "/index.html"
     }
   ]
