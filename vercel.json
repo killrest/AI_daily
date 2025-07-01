@@ -1,27 +1,10 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/*.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/health",
-      "dest": "/api/health.py"
-    },
-    {
-      "src": "/api/run-scraper",
-      "dest": "/api/run-scraper.py"
-    }
-  ],
   "functions": {
-    "api/*.py": {
+    "api/health.py": {
+      "runtime": "python3.9"
+    },
+    "api/run-scraper.py": {
       "runtime": "python3.9"
     }
-  },
-  "env": {
-    "PYTHONPATH": "/var/task"
   }
 } 
