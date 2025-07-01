@@ -1,6 +1,8 @@
 import json
+from http import HTTPStatus
 
 def handler(request):
+    """健康检查处理函数"""
     # 健康检查响应
     response_data = {
         "success": True,
@@ -10,9 +12,9 @@ def handler(request):
     }
     
     return {
-        'statusCode': 200,
+        'statusCode': HTTPStatus.OK,
         'headers': {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
