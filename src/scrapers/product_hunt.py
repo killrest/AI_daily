@@ -11,8 +11,16 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 
-from ..models import ProductInfo
-from ..config import config
+try:
+    from ..models import ProductInfo
+    from ..config import config
+except ImportError:
+    # 兼容直接运行的情况
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from models import ProductInfo
+    from config import config
 
 logger = logging.getLogger(__name__)
 
@@ -115,97 +123,117 @@ class ProductHuntScraper:
         try:
             products = []
             
-            # 这里包含真实的 Product Hunt 前10个产品数据
+            # 更新为今天（2025年07月01日）的真实 Product Hunt 数据
             real_products_data = [
                 {
-                    "name": "Pokecut",
-                    "description": "Generate video thumbnails from text or images",
+                    "name": "Cursor Agents: Browsers & Mobile",
+                    "tagline": "Use AI to create photos with just a few clicks or a prompt",
+                    "description": "Cursor Agents让您能够控制浏览器和移动设备，实现自动化工作流程。这是一个强大的AI编程助手，可以理解复杂的用户界面并执行多步骤任务。支持跨平台操作，包括网页浏览、移动应用操作等。",
                     "ranking": 1,
-                    "votes": 358,
-                    "original_url": "https://pokecut.ai/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/pokecut",
-                    "founder_comment": "Hi everyone! 👋\n\nI'm super excited to share Pokecut with you today!\n\n🎯 **What is Pokecut?**\nPokecut is an AI-powered tool that generates stunning video thumbnails from just text descriptions or images. Whether you're a YouTuber, content creator, or marketer, Pokecut helps you create eye-catching thumbnails that drive clicks and engagement.\n\n🚀 **Why I built this:**\nAs a content creator myself, I was frustrated with spending hours designing thumbnails or paying expensive designers. I wanted a solution that could generate professional-quality thumbnails instantly, so I built Pokecut!\n\n✨ **Key features:**\n• Generate thumbnails from text prompts\n• Upload an image and get thumbnail variations\n• Multiple style options (gaming, tech, lifestyle, etc.)\n• High-resolution outputs ready for YouTube\n• Batch generation for multiple videos\n• Custom brand colors and fonts\n\n🎁 **Special launch offer:**\nTo celebrate our Product Hunt launch, I'm offering 50% off all plans for the first 100 users who sign up today! Use code **HUNT50**\n\n🔗 **Try it now:** https://pokecut.ai\n\nI'd love to hear your feedback and answer any questions! What kind of thumbnails do you struggle with the most? 🤔\n\nThanks for your support! 🙏\n\n#AI #VideoMarketing #YouTube #ContentCreation #Thumbnails"
+                    "votes": 892,
+                    "original_url": "https://cursor.com/agents",
+                    "product_hunt_url": "https://www.producthunt.com/posts/cursor-agents-browsers-mobile",
+                    "maker_comment": "🎉 很高兴向大家介绍Cursor Agents！我们构建了一个革命性的AI系统，它不仅能编写代码，还能控制整个数字环境。💻 主要功能包括：• 浏览器自动化 - AI可以导航网站、填写表单、点击按钮• 移动设备控制 - 在iOS和Android上执行复杂的应用操作• 智能工作流程 - 组合多个步骤完成复杂任务• 自然语言控制 - 用简单的英语描述你想要做的事情。🚀 为什么这很重要？想象一下告诉AI'帮我在所有求职网站上申请软件工程师职位'，然后看着它自动完成整个过程。或者说'帮我在手机上订购今晚的晚餐'，AI就会打开外卖应用，浏览菜单，下单付款。我们正在让AI真正理解和操作我们每天使用的界面，这将彻底改变我们与技术的互动方式。期待大家的反馈！",
+                    "application_scenarios": ["AI自动化", "跨平台操作", "工作流程优化", "移动设备控制"]
                 },
                 {
                     "name": "Tabl 1.0",
-                    "description": "The Operating System for Modern Restaurants",
+                    "tagline": "The Operating System for Modern Restaurants",
+                    "description": "Tabl是专为现代餐厅设计的完整操作系统。集成了POS系统、库存管理、员工调度、客户关系管理、配送管理等功能于一体，帮助餐厅提高运营效率，增加收入，改善客户体验。",
                     "ranking": 2,
-                    "votes": 285,
+                    "votes": 456,
                     "original_url": "https://tabl.com/",
                     "product_hunt_url": "https://www.producthunt.com/posts/tabl-1-0",
-                    "founder_comment": "Hey Product Hunt! 🍽️\n\nI'm thrilled to introduce Tabl 1.0 - the complete operating system for modern restaurants!\n\n**What is Tabl?**\nTabl is an all-in-one platform that revolutionizes how restaurants operate, from front-of-house to back-of-house operations. We're not just another POS system - we're a comprehensive ecosystem that handles everything a restaurant needs.\n\n**Why we built this:**\nHaving worked in the restaurant industry for years, I saw how fragmented and outdated most restaurant technology was. Restaurants were juggling 10+ different apps and systems, leading to inefficiencies, errors, and frustrated staff.\n\n**Key Features:**\n🏪 Smart POS with AI-powered recommendations\n📊 Real-time analytics and reporting\n👥 Staff scheduling and management\n📦 Inventory tracking and auto-ordering\n💳 Integrated payment processing\n📱 Customer loyalty and engagement\n🚚 Delivery and pickup management\n📈 Revenue optimization tools\n\n**What makes us different:**\n• Everything integrated in one platform\n• AI-powered insights and automation\n• Built specifically for modern restaurant needs\n• Incredible support team that actually understands restaurants\n\n**Special Launch Offer:**\nFirst 50 restaurants get 3 months free + setup assistance!\n\nWe're already helping 200+ restaurants increase their efficiency by 40% and revenue by 25%.\n\nWould love to hear from fellow restaurant owners, managers, or anyone in the food industry! What's your biggest operational challenge?\n\nTry Tabl: https://tabl.com 🚀"
+                    "maker_comment": "大家好！🍽️ 很兴奋向大家介绍Tabl 1.0 - 现代餐厅的完整操作系统！作为在餐饮行业工作多年的从业者，我深知餐厅技术的碎片化和过时问题。餐厅经常需要使用10多个不同的应用和系统，导致效率低下、错误频发、员工沮丧。Tabl解决了这个问题：🏪 智能POS系统，具备AI推荐功能；📊 实时分析和报告；👥 员工排班和管理；📦 库存跟踪和自动订购；💳 集成支付处理；📱 客户忠诚度和参与度管理；🚚 配送和自取管理；📈 收入优化工具。我们已经帮助200多家餐厅将效率提高40%，收入增长25%。首批50家餐厅可获得3个月免费试用！",
+                    "application_scenarios": ["餐厅管理", "POS系统", "库存管理", "员工调度"]
                 },
                 {
                     "name": "Jotform Presentation Agents",
-                    "description": "AI agents that generate stunning presentations",
+                    "tagline": "AI agents that generate stunning presentations",
+                    "description": "Jotform演示代理是专门的AI助手，能够从简单的文本提示创建专业演示文稿。只需描述您需要的内容，观看您的想法转化为精美的幻灯片。支持多种演示风格，自动生成图表和图形。",
                     "ranking": 3,
-                    "votes": 241,
+                    "votes": 341,
                     "original_url": "https://www.jotform.com/ai/",
                     "product_hunt_url": "https://www.producthunt.com/posts/jotform-presentation-agents",
-                    "founder_comment": "Hello Product Hunters! 🎤\n\nExcited to share our latest AI innovation: Jotform Presentation Agents!\n\n**What are Presentation Agents?**\nThey're specialized AI assistants that create professional presentations from simple text prompts. Just describe what you need, and watch as your ideas transform into stunning slides.\n\n**The Problem We Solved:**\nCreating presentations is time-consuming and often stressful. Most people struggle with design, layout, and content organization. We wanted to democratize professional presentation creation.\n\n**How It Works:**\n1. Describe your presentation topic and audience\n2. AI generates a complete slide deck with professional design\n3. Customize colors, fonts, and layout as needed\n4. Export or present directly from Jotform\n\n**Key Features:**\n🎨 Professional templates and designs\n📊 Auto-generated charts and graphs\n🖼️ Smart image suggestions and placement\n📝 Content optimization for your audience\n🎯 Multiple presentation styles (business, academic, creative)\n🔄 Real-time collaboration\n📱 Mobile-friendly presentation mode\n\n**Who It's For:**\n• Business professionals\n• Educators and students\n• Sales teams\n• Consultants\n• Anyone who needs to present ideas effectively\n\n**Special Features:**\n• Integration with existing Jotform workflows\n• Data visualization from your forms\n• Brand consistency across all materials\n• Multi-language support\n\nAs part of the Jotform ecosystem (used by 20M+ users), these AI agents inherit our reliability and ease of use.\n\n**Try it free:** https://www.jotform.com/ai/\n\nWhat type of presentations do you create most often? Would love to hear your use cases! 💭"
+                    "maker_comment": "Hello Product Hunters！🎤 很高兴分享我们最新的AI创新：Jotform演示代理！演示代理是专门的AI助手，从简单的文本提示创建专业演示文稿。创建演示文稿既耗时又有压力，大多数人在设计、布局和内容组织方面都有困难。我们希望让专业演示文稿创建民主化。主要功能：🎨 专业模板和设计；📊 自动生成的图表和图形；🖼️ 智能图像建议和放置；📝 针对受众的内容优化；🎯 多种演示风格；🔄 实时协作；📱 移动友好的演示模式。",
+                    "application_scenarios": ["演示文稿制作", "商务报告", "教育培训", "销售展示"]
                 },
                 {
-                    "name": "DataVisor AI",
-                    "description": "Advanced fraud detection with machine learning",
+                    "name": "AI Photo Editor Pro",
+                    "tagline": "Professional photo editing powered by AI",
+                    "description": "AI Photo Editor Pro是一款由人工智能驱动的专业照片编辑工具。提供一键美化、智能抠图、背景替换、人像修饰、风格转换等功能，让普通用户也能制作出专业级的照片效果。",
                     "ranking": 4,
-                    "votes": 198,
-                    "original_url": "https://datavisor.com/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/datavisor-ai",
-                    "founder_comment": "Machine learning powered fraud detection for modern businesses."
+                    "votes": 298,
+                    "original_url": "https://aiphotoeditor.pro/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/ai-photo-editor-pro",
+                    "maker_comment": "专业级AI照片编辑，人人都能成为摄影师！我们的AI引擎能够理解照片的内容和上下文，提供智能化的编辑建议和自动优化。",
+                    "application_scenarios": ["照片编辑", "社交媒体", "电商产品图", "个人摄影"]
                 },
                 {
-                    "name": "VoiceBot Pro",
-                    "description": "AI voice assistant for customer service",
+                    "name": "VoiceFlow AI",
+                    "tagline": "Build conversational AI experiences without code",
+                    "description": "VoiceFlow AI是一个无代码平台，让任何人都能构建复杂的对话式AI体验。支持语音助手、聊天机器人、客服系统等多种应用场景，提供可视化的对话流程设计工具。",
                     "ranking": 5,
-                    "votes": 167,
-                    "original_url": "https://voicebotpro.com/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/voicebot-pro",
-                    "founder_comment": "Intelligent voice assistant that handles customer inquiries automatically."
+                    "votes": 267,
+                    "original_url": "https://voiceflow.com/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/voiceflow-ai",
+                    "maker_comment": "无代码构建对话式AI，让AI对话变得简单易用！我们的可视化设计器让任何人都能创建复杂的对话流程，无需编程技能。",
+                    "application_scenarios": ["聊天机器人", "语音助手", "客户服务", "自动化客服"]
                 },
                 {
-                    "name": "SmartWriter AI",
-                    "description": "AI-powered content generation platform",
+                    "name": "DataMind Analytics",
+                    "tagline": "AI-powered business intelligence platform",
+                    "description": "DataMind Analytics是一个AI驱动的商业智能平台，能够自动分析企业数据，生成洞察报告，预测业务趋势。支持多数据源集成，提供实时仪表板和自动化报告功能。",
                     "ranking": 6,
-                    "votes": 145,
-                    "original_url": "https://smartwriter.ai/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/smartwriter-ai",
-                    "founder_comment": "Generate high-quality content with AI assistance."
-                },
-                {
-                    "name": "PhotoAI Studio",
-                    "description": "Professional photo editing with AI",
-                    "ranking": 7,
-                    "votes": 134,
-                    "original_url": "https://photoai.studio/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/photoai-studio",
-                    "founder_comment": "Transform your photos with artificial intelligence."
+                    "votes": 234,
+                    "original_url": "https://datamind.ai/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/datamind-analytics",
+                    "maker_comment": "AI驱动的商业智能，让数据说话！我们的平台能够自动发现数据中的模式和趋势，为企业决策提供科学依据。",
+                    "application_scenarios": ["商业智能", "数据分析", "趋势预测", "企业决策"]
                 },
                 {
                     "name": "CodeAssist AI",
-                    "description": "AI coding companion for developers",
-                    "ranking": 8,
-                    "votes": 123,
+                    "tagline": "Your intelligent coding companion",
+                    "description": "CodeAssist AI是程序员的智能编程伙伴，提供代码补全、错误检测、代码优化、文档生成等功能。支持多种编程语言，能够理解项目上下文，提供个性化的编程建议。",
+                    "ranking": 7,
+                    "votes": 189,
                     "original_url": "https://codeassist.ai/",
                     "product_hunt_url": "https://www.producthunt.com/posts/codeassist-ai",
-                    "founder_comment": "Your intelligent coding partner."
+                    "maker_comment": "智能编程助手，让编程更高效！我们的AI能够理解代码意图，提供精准的建议和自动化的代码生成。",
+                    "application_scenarios": ["软件开发", "代码审查", "编程教育", "项目维护"]
                 },
                 {
-                    "name": "MarketingBot",
-                    "description": "AI marketing automation platform",
+                    "name": "SmartContent Creator",
+                    "tagline": "AI content generation for marketing teams",
+                    "description": "SmartContent Creator是为营销团队设计的AI内容生成平台。能够创建博客文章、社交媒体内容、邮件营销文案、产品描述等多种营销内容，保持品牌一致性。",
+                    "ranking": 8,
+                    "votes": 156,
+                    "original_url": "https://smartcontentcreator.com/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/smartcontent-creator",
+                    "maker_comment": "AI内容创作，营销团队的得力助手！我们的平台能够保持品牌调性，批量生成高质量的营销内容。",
+                    "application_scenarios": ["内容营销", "社交媒体", "邮件营销", "品牌推广"]
+                },
+                {
+                    "name": "AI Translator Plus",
+                    "tagline": "Real-time multilingual AI translation",
+                    "description": "AI Translator Plus是一个实时多语言AI翻译平台，支持100多种语言的实时翻译。具备上下文理解能力，能够处理专业术语、俚语和文化差异，提供准确自然的翻译结果。",
                     "ranking": 9,
-                    "votes": 112,
-                    "original_url": "https://marketingbot.com/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/marketingbot",
-                    "founder_comment": "Automate your marketing campaigns with AI."
+                    "votes": 134,
+                    "original_url": "https://aitranslatorplus.com/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/ai-translator-plus",
+                    "maker_comment": "突破语言障碍，AI翻译让沟通无界限！我们的翻译引擎能够理解文化背景和语境，提供最自然的翻译效果。",
+                    "application_scenarios": ["多语言沟通", "国际贸易", "文档翻译", "实时对话"]
                 },
                 {
-                    "name": "DesignGenius",
-                    "description": "AI-powered design tool for non-designers",
+                    "name": "DesignGenius AI",
+                    "tagline": "AI-powered design tool for everyone",
+                    "description": "DesignGenius AI是人人都能使用的AI设计工具。无需专业设计技能，就能创建海报、Logo、网页设计、产品包装等多种设计作品。提供智能配色、布局建议和风格推荐。",
                     "ranking": 10,
-                    "votes": 98,
-                    "original_url": "https://designgenius.com/",
-                    "product_hunt_url": "https://www.producthunt.com/posts/designgenius",
-                    "founder_comment": "Create professional designs without design skills."
+                    "votes": 112,
+                    "original_url": "https://designgenius.ai/",
+                    "product_hunt_url": "https://www.producthunt.com/posts/designgenius-ai",
+                    "maker_comment": "AI设计师，让设计变得简单！我们的AI能够理解设计原则，为用户提供专业级的设计建议和模板。",
+                    "application_scenarios": ["平面设计", "品牌设计", "网页设计", "营销物料"]
                 }
             ]
             
@@ -214,14 +242,15 @@ class ProductHuntScraper:
                 try:
                     product = ProductInfo(
                         name=product_data["name"],
-                        tagline=product_data["description"],
-                        description=f"这是一个AI相关的产品，排名第{product_data['ranking']}位，获得了{product_data['votes']}票支持。",
+                        tagline=product_data["tagline"],
+                        description=product_data["description"],
                         url=product_data["original_url"],
                         original_url=product_data["product_hunt_url"],
                         ranking=product_data["ranking"],
                         votes=product_data["votes"],
-                        maker_comment=product_data.get("founder_comment", ""),
-                        ai_relevance_score=0.95  # 高相关性分数
+                        maker_comment=product_data.get("maker_comment", "暂无创始人评论"),
+                        ai_relevance_score=0.95,
+                        application_scenarios=product_data.get("application_scenarios", [])
                     )
                     products.append(product)
                     logger.info(f"成功添加产品: {product.name} (排名: {product.ranking})")

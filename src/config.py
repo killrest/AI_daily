@@ -18,6 +18,7 @@ class AppConfig:
     name: str
     version: str
     timezone: str
+    log_level: str = "INFO"
 
 @dataclass
 class SourceConfig:
@@ -83,7 +84,8 @@ class ConfigManager:
             self.app = AppConfig(
                 name=app_data.get('name', '彩虹一号'),
                 version=app_data.get('version', '1.0.0'),
-                timezone=app_data.get('timezone', 'Asia/Shanghai')
+                timezone=app_data.get('timezone', 'Asia/Shanghai'),
+                log_level=app_data.get('log_level', 'INFO')
             )
             
             # 信息源配置
@@ -152,7 +154,7 @@ class ConfigManager:
     
     def _load_default_config(self):
         """加载默认配置"""
-        self.app = AppConfig("彩虹一号", "1.0.0", "Asia/Shanghai")
+        self.app = AppConfig("彩虹一号", "1.0.0", "Asia/Shanghai", "INFO")
         self.product_hunt = SourceConfig(True, "https://www.producthunt.com", 
                                        "https://api.producthunt.com/v2/api/graphql", 60)
         self.ai = AIConfig("volcengine_ark", "deepseek-v3", 0.3, 2000, 

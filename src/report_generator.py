@@ -49,30 +49,32 @@ class ReportGenerator:
         return markdown_content
     
     def _format_single_product(self, product: ProductInfo, index: int) -> str:
-        """格式化单个产品信息，按照用户要求的格式"""
+        """格式化单个产品信息，严格按照用户要求的格式"""
         
         # 应用场景列表
         scenarios_text = ""
-        if product.application_scenarios:
+        if product.application_scenarios and len(product.application_scenarios) > 0:
             scenarios_text = "、".join(product.application_scenarios)
         else:
-            scenarios_text = "通用AI应用场景"
+            scenarios_text = "AI应用场景"
         
-        # 详细功能介绍
+        # 详细功能介绍 - 综合产品描述和tagline
         detailed_intro = ""
-        if product.translated_description or product.description:
-            detailed_intro = product.translated_description or product.description
+        if product.description:
+            detailed_intro = product.description
+        elif product.tagline:
+            detailed_intro = product.tagline
         else:
             detailed_intro = "暂无详细介绍"
         
-        # 创始人评论
+        # 创始人评论 - 使用完整的maker_comment
         founder_comment = ""
-        if product.maker_comment:
+        if product.maker_comment and product.maker_comment != "暂无创始人评论":
             founder_comment = product.maker_comment
         else:
             founder_comment = "暂无创始人评论"
         
-        # 构建产品报告（按照用户要求的简化格式）
+        # 构建产品报告（严格按照用户要求的格式）
         product_report = f"""# {product.name} - {product.tagline}
 - 排名：第 {product.ranking} 名
 - 项目名称：{product.name}
@@ -80,7 +82,7 @@ class ReportGenerator:
 - 应用场景：{scenarios_text}
 - 创始人评论：{founder_comment}
 - 原始链接：{product.url or '暂无官网链接'}
-- Product Hunt链接：{product.original_url}"""
+- Product hunt链接：{product.original_url}"""
         
         return product_report
     
