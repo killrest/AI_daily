@@ -9,5 +9,19 @@
       "src": "api/run-scraper.py", 
       "use": "@vercel/python"
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/api/health.py"
+    },
+    {
+      "src": "/api/run-scraper",
+      "dest": "/api/run-scraper.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 } 
