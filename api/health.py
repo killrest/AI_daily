@@ -1,8 +1,7 @@
-import json
-from http import HTTPStatus
-
 def handler(request):
     """健康检查处理函数"""
+    import json
+    
     # 健康检查响应
     response_data = {
         "success": True,
@@ -12,7 +11,7 @@ def handler(request):
     }
     
     return {
-        'statusCode': HTTPStatus.OK,
+        'statusCode': 200,
         'headers': {
             'Content-Type': 'application/json; charset=utf-8',
             'Access-Control-Allow-Origin': '*',

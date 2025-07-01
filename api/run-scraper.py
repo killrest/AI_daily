@@ -1,36 +1,27 @@
-import json
-import sys
-import os
-import logging
-from http import HTTPStatus
-
-# 添加src目录到Python路径
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-src_dir = os.path.join(parent_dir, 'src')
-sys.path.insert(0, src_dir)
-sys.path.insert(0, parent_dir)
-
-# 配置日志
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# 尝试导入依赖
-try:
-    from src.main_service import RainbowOneService
-    from src.config import config
-    logger.info("成功导入必要模块")
-except ImportError as e:
-    logger.error(f"Import error: {e}")
-    # 确保即使导入失败也能返回错误响应
-
 def handler(request):
     """处理请求的主函数"""
+    import json
+    import sys
+    import os
+    import logging
+    
+    # 配置日志
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    
     try:
+        # 添加src目录到Python路径
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        src_dir = os.path.join(parent_dir, 'src')
+        sys.path.insert(0, src_dir)
+        sys.path.insert(0, parent_dir)
+        
         # 处理预检请求
-        if hasattr(request, 'method') and request.method == 'OPTIONS':
+        method = getattr(request, 'method', 'GET')
+        if method == 'OPTIONS':
             return {
-                'statusCode': HTTPStatus.OK,
+                'statusCode': 200,
                 'headers': {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -40,10 +31,9 @@ def handler(request):
             }
         
         # 只处理POST请求
-        method = getattr(request, 'method', 'GET')
         if method != 'POST':
             return {
-                'statusCode': HTTPStatus.METHOD_NOT_ALLOWED,
+                'statusCode': 405,
                 'headers': {
                     'Content-Type': 'application/json; charset=utf-8',
                     'Access-Control-Allow-Origin': '*',
@@ -54,8 +44,8 @@ def handler(request):
                 }, ensure_ascii=False)
             }
         
+        # 读取请求数据
         try:
-            # 读取请求数据
             body = request.get_data() if hasattr(request, 'get_data') else b''
             if body:
                 request_data = json.loads(body.decode('utf-8'))
@@ -66,7 +56,7 @@ def handler(request):
             
             if action == 'generate_report':
                 # 执行AI日报生成
-                result = generate_ai_report()
+                result = generate_ai_report(logger)
                 response_data = {
                     "success": True,
                     "message": "AI日报生成成功！已推送到飞书",
@@ -86,7 +76,7 @@ def handler(request):
             }
         
         return {
-            'statusCode': HTTPStatus.OK,
+            'statusCode': 200,
             'headers': {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Access-Control-Allow-Origin': '*',
@@ -97,9 +87,8 @@ def handler(request):
         }
         
     except Exception as e:
-        logger.error(f"Handler 发生致命错误: {e}")
         return {
-            'statusCode': HTTPStatus.INTERNAL_SERVER_ERROR,
+            'statusCode': 500,
             'headers': {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Access-Control-Allow-Origin': '*',
@@ -110,14 +99,15 @@ def handler(request):
             }, ensure_ascii=False)
         }
 
-def generate_ai_report():
+def generate_ai_report(logger):
     """生成AI日报"""
     try:
         logger.info("开始生成AI日报...")
         
-        # 检查是否成功导入了必要模块
+        # 尝试导入必要模块
         try:
             from src.main_service import RainbowOneService
+            logger.info("成功导入 RainbowOneService")
         except ImportError as e:
             logger.error(f"无法导入 RainbowOneService: {e}")
             raise Exception(f"系统模块导入失败: {e}")
@@ -135,18 +125,12 @@ def generate_ai_report():
         products = rainbow_service.get_latest_products()
         report = rainbow_service.get_latest_report()
         
-        result = {
-            "products": [{"name": p.name, "ranking": p.ranking} for p in products] if products else [],
-            "report_date": report.date.isoformat() if report else None,
-            "feishu_sent": success
-        }
-        
         logger.info("AI日报生成完成")
         
         return {
-            "products_count": len(result.get("products", [])),
-            "report_files": result.get("report_files", []),
-            "feishu_sent": result.get("feishu_sent", False)
+            "products_count": len(products) if products else 0,
+            "report_date": report.date.isoformat() if report else None,
+            "feishu_sent": success
         }
         
     except Exception as e:
